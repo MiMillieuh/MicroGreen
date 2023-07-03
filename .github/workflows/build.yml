@@ -42,5 +42,6 @@ jobs:
 
       - name: Tag and Push Image to GHCR
         run: |
-          docker tag opensuse/tumbleweed ghcr.io/${{ github.actor }}/ostree-image:latest
-          docker push ghcr.io/${{ github.actor }}/ostree-image:latest
+          docker tag opensuse/tumbleweed ghcr.io/${{ github.actor_lowercase }}/ostree-image:latest
+          docker push ghcr.io/${{ github.actor_lowercase }}/ostree-image:latest
+
