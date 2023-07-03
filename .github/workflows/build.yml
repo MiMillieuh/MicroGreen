@@ -23,11 +23,12 @@ jobs:
 
       - name: Installer les dépendances
         run: |
-          sudo apt install kiwi kiwi-desc-isoboot kiwi-desc-netboot kiwi-tools mic ostree
+          sudo apt-get update
+          sudo apt-get install -y kiwi kiwi-desc-isoboot kiwi-desc-netboot kiwi-tools mic ostree
 
-      - name: Installer le paquet neofetch
+      - name: Ajouter le requirement neofetch
         run: |
-          sudo zypper install -y neofetch
+          echo "Requires: neofetch" >> microOS-desktop/packages/microos-console.spec
 
       - name: Construire l'image OSTree personnalisée
         run: |
