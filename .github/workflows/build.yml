@@ -33,6 +33,7 @@ jobs:
 
       - name: Build OSTree Image
         run: |
+          docker build -t ostree-image:latest .
           docker run --rm \
           -v ${{ github.workspace }}/ostree-repo:/repo \
           -v ${{ github.workspace }}/custom-root:/mnt \
