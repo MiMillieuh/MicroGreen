@@ -39,6 +39,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+
       - name: Convert username to lowercase
         id: convert_username
         run: echo "::set-output name=username_lowercase::${{ github.actor }}" | tr '[:upper:]' '[:lower:]'
@@ -47,4 +49,3 @@ jobs:
         run: |
           docker tag opensuse/tumbleweed ghcr.io/${{ steps.convert_username.outputs.username_lowercase }}/ostree-image:latest
           docker push ghcr.io/${{ steps.convert_username.outputs.username_lowercase }}/ostree-image:latest
-
