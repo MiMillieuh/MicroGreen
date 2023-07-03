@@ -12,11 +12,7 @@ on:
   # to build any branch, even if it's not listed in the automated triggers above.
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
   workflow_dispatch:
-
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
+  
 
 jobs:
   build:
