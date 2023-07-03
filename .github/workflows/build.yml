@@ -22,9 +22,6 @@ jobs:
             -v ${{ github.workspace }}/custom-root:/mnt \
             opensuse/tumbleweed /bin/sh -c '
             zypper --non-interactive install ostree neofetch && \
-            touch /mnt/etc/ostree/hooks/pre-scripts.d/01-neofetch.sh \
-            echo "neofetch" >> /mnt/etc/ostree/hooks/pre-scripts.d/01-neofetch.sh && \
-            chmod +x /mnt/etc/ostree/hooks/pre-scripts.d/01-neofetch.sh && \
             ostree commit --repo=/repo --branch=ma_branche --tree=/mnt
             '
 
