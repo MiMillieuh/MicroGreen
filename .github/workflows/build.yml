@@ -40,9 +40,20 @@ jobs:
           echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
           echo 'aliases=stable' | sudo tee -a /etc/schroot/chroot.d/debian.conf
 
+      - name: Add openSUSE repositories
+        run: |
+          echo "deb http://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/ /" | sudo tee /var/chroot/debian/etc/apt/sources.list.d/opensuse.list
+          echo "deb http://download.opensuse.org/repositories/system:/image:/builder/Debian_11/ /" | sudo tee -a /var/chroot/debian/etc/apt/sources.list.d/opensuse.list
+          echo "deb http://download.opensuse.org/repositories/home:/kukuk/Debian_11/ /" | sudo tee -a /var/chroot/debian/etc/apt/sources.list.d/opensuse.list
+          sudo chroot /var/chroot/debian apt-get update
+
+      - name: Install kiwi-tools
+        run: |
+          sudo chroot /var/chroot/debian apt-get install -y kiwi-tools
+
       - name: Build openSUSE Micro OS Image
         run: |
-          sudo schroot -c debian --directory=/root -- bash -c "apt-get update && apt-get install -y kiwi-tools && kiwi-ng system build --description /root/microos.kiwi"
+          sudo schroot -c debian --directory=/root -- kiwi-ng system build --description /root/microos.kiwi
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
