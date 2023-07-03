@@ -3,6 +3,15 @@ on:
   push:
     branches:
       - main
+      
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - "**.txt"
+  # Build when manually triggering this workflow for a branch. This allows you
+  # to build any branch, even if it's not listed in the automated triggers above.
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   build:
