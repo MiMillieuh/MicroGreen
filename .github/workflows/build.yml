@@ -34,7 +34,6 @@ jobs:
           git clone https://github.com/coreos/coreos-assembler.git
           cd coreos-assembler
           make
-          tree
           sudo cp bin/cosa /usr/local/bin/
 
           # Customization - Add neofetch package
