@@ -18,24 +18,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout du code source
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Installer Docker
-        uses: docker/setup-buildx-action@v1
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
 
-      - name: Construire l'image MicroOS personnalisée
+      - name: Build and Push openSUSE MicroOS Image
         run: |
-          docker run --rm -v $PWD:/workspace -w /workspace opensuse/leap:latest bash -c "zypper --non-interactive install -y wget && wget https://github.com/openSUSE/kiwi/releases/download/9.23.8/kiwi-9.23.8-1.x86_64.rpm && zypper --non-interactive install -y kiwi-9.23.8-1.x86_64.rpm && git clone https://github.com/openSUSE/microOS-desktop.git && cd microOS-desktop && sudo kiwi-ng --type ostree system build --description kiwi-desc-netboot && sudo mv result/* /workspace"
-
-      - name: Login to GHCR
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build et push de l'image OSTree vers GHCR
-        run: |
-          docker buildx create --use --name ostree
-          docker buildx build --push --platform linux/amd64 --tag ghcr.io/$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')/${{ github.repository_name }}:latest .
+          git clone https://github.com/openSUSE/image-factory.git
+          cd image-factory
+          cp config/templates/microos.conf config/myconfig.conf
+          echo 'customize the myconfig.conf file as needed'
+          ./imagefactory.sh --config config/myconfig.conf --target /path/to/destination/folder/
+          docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} /path/to/destination/folder/
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
