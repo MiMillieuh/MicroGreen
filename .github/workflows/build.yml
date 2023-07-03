@@ -26,37 +26,36 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y podman
 
-      - name: Create Debian chroot
+      - name: Create openSUSE chroot
         run: |
           sudo apt-get install -y debootstrap schroot
-          sudo debootstrap stable /var/chroot/debian http://deb.debian.org/debian
+          sudo debootstrap stable /var/chroot/opensuse http://download.opensuse.org/ports/aarch64/tumbleweed/repo/oss/
 
       - name: Set up schroot
         run: |
-          echo '[debian]' | sudo tee /etc/schroot/chroot.d/debian.conf
-          echo 'description=Debian chroot' | sudo tee -a /etc/schroot/chroot.d/debian.conf
-          echo 'directory=/var/chroot/debian' | sudo tee -a /etc/schroot/chroot.d/debian.conf
-          echo 'users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
-          echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
-          echo 'aliases=stable' | sudo tee -a /etc/schroot/chroot.d/debian.conf
+          echo '[opensuse]' | sudo tee /etc/schroot/chroot.d/opensuse.conf
+          echo 'description=openSUSE chroot' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
+          echo 'directory=/var/chroot/opensuse' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
+          echo 'users=root' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
+          echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
+          echo 'aliases=tumbleweed' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
 
       - name: Import Kiwi repository key
         run: |
-          wget -O kiwi.pub https://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/Release.key.pub
-          sudo apt-key --keyring /etc/apt/trusted.gpg.d/kiwi.gpg add kiwi.pub
+          sudo chroot /var/chroot/opensuse rpm --import https://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Tumbleweed/repodata/repomd.xml.key
 
       - name: Add Kiwi repository
         run: |
-          echo "deb http://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/ /" | sudo tee /etc/apt/sources.list.d/kiwi.list
-          sudo apt-get update
+          echo "deb http://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Tumbleweed/ /" | sudo tee /var/chroot/opensuse/etc/apt/sources.list.d/kiwi.list
+          sudo chroot /var/chroot/opensuse zypper refresh
 
       - name: Install kiwi-tools
         run: |
-          sudo chroot /var/chroot/debian apt-get install -y kiwi-tools
+          sudo chroot /var/chroot/opensuse zypper install -y kiwi kiwi-tools
 
       - name: Build openSUSE Micro OS Image
         run: |
-          sudo schroot -c debian --directory=/root -- kiwi-ng system build --description /root/microos.kiwi
+          sudo schroot -c opensuse -- kiwi system build --description /root/microos.kiwi
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
@@ -67,6 +66,6 @@ jobs:
 
       - name: Push image to GHCR
         run: |
-          podman load -i microos.raw.tar.xz
+          podman load -i /var/chroot/opensuse/root/microos-kernel
           podman tag opensuse/microos:latest ghcr.io/your-username/microos-image:latest
           podman push ghcr.io/your-username/microos-image:latest
