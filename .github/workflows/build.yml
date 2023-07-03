@@ -30,17 +30,9 @@ jobs:
         run: |
           podman run -d --name opensuse-container opensuse/leap:latest tail -f /dev/null
 
-      - name: Install build dependencies
+      - name: Install dependencies
         run: |
-          podman exec opensuse-container zypper --non-interactive install git make gcc libtool autoconf automake pkg-config libglib2.0-devel libxml2-devel
-
-      - name: Clone Kiwi repository
-        run: |
-          podman exec opensuse-container git clone https://github.com/openSUSE/kiwi.git /root/kiwi
-
-      - name: Build Kiwi
-        run: |
-          podman exec opensuse-container bash -c "cd /root/kiwi && ./autogen.sh && make"
+          podman exec opensuse-container zypper --non-interactive install git make gcc libtool autoconf automake pkg-config glib2-devel libxml2-devel
 
       - name: Copy kiwi description
         run: |
@@ -48,7 +40,7 @@ jobs:
 
       - name: Build openSUSE Micro OS Image
         run: |
-          podman exec opensuse-container /root/kiwi/kiwi-ng system build --description /root/microos.kiwi
+          podman exec opensuse-container kiwi-ng system build --description /root/microos.kiwi
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
