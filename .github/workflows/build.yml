@@ -13,6 +13,7 @@ on:
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
   workflow_dispatch:
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,15 +22,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Docker
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Build and Push openSUSE MicroOS Image
+      - name: Build Micro OS Image
         run: |
-          git clone https://github.com/openSUSE/image-factory.git
-          cd image-factory
-          mkdir img-build
-          cp config/templates/microos.conf config/myconfig.conf
-          echo 'customize the myconfig.conf file as needed'
-          ./imagefactory.sh --config config/myconfig.conf --target img-build/
-          docker buildx build --platform linux/amd64 --push -t ghcr.io/${{ github.repository }}:${{ github.sha }} img-build/
+          docker buildx create --use --name=mybuilder
+          git clone https://github.com/coreos/coreos-assembler.git
+          cd coreos-assembler
+          make
+          sudo cp bin/cosa /usr/local/bin/
+
+          # Customization - Add neofetch package
+          echo 'neofetch' | sudo tee -a configs/platforms/microstream.xml
+
+          # Build the image
+          sudo cosa build -p microstream -c configs/platforms/microstream.xml
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image to GHCR
+        run: |
+          docker tag coreos-assembler/microstream:latest ghcr.io/mimillieuh/microos-image:latest
+          docker push ghcr.io/mimillieuh/microos-image:latest
