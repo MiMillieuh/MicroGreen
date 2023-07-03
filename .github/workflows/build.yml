@@ -43,5 +43,5 @@ jobs:
 
       - name: Tag and Push Image to GHCR
         run: |
-          docker tag ostree-builder ghcr.io/${{ github.repository_owner }}/ostree-image:latest
-          docker push ghcr.io/${{ github.repository_owner }}/ostree-image:latest
+          docker tag ostree-builder ghcr.io/${{ github.repository_owner|lower }}/ostree-image:latest
+          docker push ghcr.io/${{ github.repository_owner|lower }}/ostree-image:latest
