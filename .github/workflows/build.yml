@@ -18,6 +18,10 @@ jobs:
           mkdir -p ${{ github.workspace }}/custom-root
           chmod -R 777 ${{ github.workspace }}/ostree-repo
           chmod -R 777 ${{ github.workspace }}/custom-root
+          
+      - name: Create OSTree Repository
+        run: |
+          ostree init --repo=${{ github.workspace }}/ostree-repo
 
 
       - name: Set up Docker
