@@ -11,6 +11,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+        
+      - name: Create OSTree Directory
+        run: |
+          mkdir -p ${{ github.workspace }}/ostree-repo
+          mkdir -p ${{ github.workspace }}/custom-root
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
