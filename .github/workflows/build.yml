@@ -46,7 +46,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build et push de l'image OSTree vers GHCR
+      - name: Build et push de limage OSTree vers GHCR
         run: |
           docker buildx create --use --name ostree
           docker buildx build --push --platform linux/amd64 --tag ghcr.io/${{ github.repository_owner | lower }}/${{ github.repository_name }}:latest .
