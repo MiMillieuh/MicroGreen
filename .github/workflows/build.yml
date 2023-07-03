@@ -20,7 +20,7 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}/ostree-repo:/repo \
             -v ${{ github.workspace }}/custom-root:/mnt \
-            opensuse:latest /bin/sh -c '
+            opensuse/tumbleweed /bin/sh -c '
             zypper --non-interactive install ostree neofetch && \
             echo "neofetch" >> /mnt/etc/ostree/hooks/pre-scripts.d/01-neofetch.sh && \
             chmod +x /mnt/etc/ostree/hooks/pre-scripts.d/01-neofetch.sh && \
