@@ -30,7 +30,7 @@ jobs:
             opensuse/tumbleweed /bin/sh -c '
             zypper --non-interactive install ostree neofetch && \
             ostree init --repo=/repo && \
-            ostree commit --repo=/repo --branch=ma_branche --tree=dir:/mnt
+            ostree commit --repo=/repo --branch=ma_branche --tree=dir=/mnt
             '
 
       - name: Log in to GHCR
