@@ -42,6 +42,5 @@ jobs:
 
       - name: Tag and Push Image to GHCR
         run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          docker tag opensuse/tumbleweed ghcr.io/${OWNER}/ostree-image:latest
-          docker push ghcr.io/${OWNER}/ostree-image:latest
+          docker tag opensuse/tumbleweed ghcr.io/${{ github.actor }}/ostree-image:latest
+          docker push ghcr.io/${{ github.actor }}/ostree-image:latest
