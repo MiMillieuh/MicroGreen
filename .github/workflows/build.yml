@@ -13,7 +13,6 @@ on:
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
   workflow_dispatch:
   
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,23 +23,23 @@ jobs:
 
       - name: Set up Podman
         run: |
-          apt-get update
-          apt-get install -y podman
+          sudo apt-get update
+          sudo apt-get install -y podman
 
       - name: Create Debian chroot
         run: |
-          apt-get install -y debootstrap schroot
-          mkdir -p /var/chroot/debian
-          debootstrap stable /var/chroot/debian http://deb.debian.org/debian
+          sudo apt-get install -y debootstrap schroot
+          sudo mkdir -p /var/chroot/debian
+          sudo debootstrap stable /var/chroot/debian http://deb.debian.org/debian
 
       - name: Set up schroot
         run: |
-          echo "debian /var/chroot/debian" >> /etc/schroot/schroot.conf
-          echo "session-required-files = /dev/tty" >> /etc/schroot/schroot.conf
+          echo "debian /var/chroot/debian" | sudo tee -a /etc/schroot/schroot.conf
+          echo "session-required-files = /dev/tty" | sudo tee -a /etc/schroot/schroot.conf
 
       - name: Build openSUSE Micro OS Image
         run: |
-          schroot -c debian -- kiwi-ng system build --description microos.kiwi
+          sudo schroot -c debian -- kiwi-ng system build --description microos.kiwi
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
