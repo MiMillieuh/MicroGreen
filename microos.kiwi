@@ -1,0 +1,22 @@
+<image>
+  <description>Micro OS Image</description>
+  <format>qcow2</format>
+  <type>zstd</type>
+  <compressor>zstd</compressor>
+  <source>
+    <kiwi source="type">auto</kiwi>
+    <kiwi source="repository">http://download.opensuse.org/</kiwi>
+    <kiwi source="package">MicroOS-MicroOS-MicroOS</kiwi>
+    <kiwi source="version">Tumbleweed</kiwi>
+    <kiwi source="arch">x86_64</kiwi>
+  </source>
+  <target>
+    <image buildroot="/var/tmp/kiwi-tmp" root="/dev/sda2" />
+    <bootloader>
+      <uefi>
+        <efivar>BOOT\BOOTX64.EFI</efivar>
+        <system-partition-size>600</system-partition-size>
+      </uefi>
+    </bootloader>
+  </target>
+</image>
