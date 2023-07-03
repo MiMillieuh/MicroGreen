@@ -32,9 +32,9 @@ jobs:
 
       - name: Add Kiwi repositories
         run: |
-          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Leap_15.3/ kiwi
-          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/Virtualization:/containers:/Builder/openSUSE_Leap_15.3/ kiwi-builder
-          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/home:/kukuk/openSUSE_Leap_15.3/ kiwi-kukuk
+          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/Virtualization:/containers/15.5/ kiwi
+          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/Virtualization:/containers:/Builder/15.5/ kiwi-builder
+          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/home:/kukuk/SLE_15_SP4/ kiwi-kukuk
           podman exec opensuse-container zypper refresh
 
       - name: Install kiwi and kiwi-tools
