@@ -30,10 +30,6 @@ jobs:
         run: |
           podman run -d --name opensuse-container opensuse/leap:latest tail -f /dev/null
 
-      - name: Copy repository key
-        run: |
-          podman cp /etc/apt/trusted.gpg.d/opensuse-container.gpg opensuse-container:/etc/apt/trusted.gpg.d/opensuse-container.gpg
-
       - name: Copy kiwi-ng configuration
         run: |
           podman cp /etc/kiwi-ng/opensuse-container.conf opensuse-container:/etc/kiwi-ng/opensuse-container.conf
