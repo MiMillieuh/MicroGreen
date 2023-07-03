@@ -34,6 +34,7 @@ jobs:
             -v ${{ github.workspace }}/custom-root:/mnt \
             opensuse/tumbleweed /bin/sh -c '
             zypper --non-interactive install ostree neofetch && \
+            ostree init --repo=/repo && \
             ostree commit --repo=/repo --branch=ma_branche --tree=/mnt
             '
 
