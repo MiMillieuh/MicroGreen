@@ -28,7 +28,7 @@ jobs:
 
       - name: Construire l'image OSTree personnalisée
         run: |
-          podman run --rm -v $PWD:/workspace -w /workspace registry.opensuse.org/opensuse/leap:latest bash -c "zypper --non-interactive in kiwi kiwi-desc-isoboot kiwi-desc-netboot kiwi-tools mic ostree && git clone https://github.com/openSUSE/microOS-desktop.git && cd microOS-desktop && sudo kiwi-ng --type ostree system build --description kiwi-desc-netboot && sudo mv result/* /workspace"
+          podman run --rm -v $PWD:/workspace -w /workspace opensuse/leap:latest bash -c "zypper --non-interactive install -y kiwi kiwi-desc-netboot kiwi-desc-isoboot kiwi-tools ostree && git clone https://github.com/openSUSE/microOS-desktop.git && cd microOS-desktop && sudo kiwi-ng --type ostree system build --description kiwi-desc-netboot && sudo mv result/* /workspace"
 
       - name: Configurer l'environnement Docker
         uses: docker/setup-buildx-action@v1
