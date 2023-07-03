@@ -29,13 +29,16 @@ jobs:
       - name: Create Debian chroot
         run: |
           sudo apt-get install -y debootstrap schroot
-          sudo mkdir -p /var/chroot/debian
           sudo debootstrap stable /var/chroot/debian http://deb.debian.org/debian
 
       - name: Set up schroot
         run: |
-          echo "debian /var/chroot/debian" | sudo tee -a /etc/schroot/schroot.conf
-          echo "session-required-files = /dev/tty" | sudo tee -a /etc/schroot/schroot.conf
+          echo '[debian]' | sudo tee /etc/schroot/chroot.d/debian.conf
+          echo 'description=Debian chroot' | sudo tee -a /etc/schroot/chroot.d/debian.conf
+          echo 'directory=/var/chroot/debian' | sudo tee -a /etc/schroot/chroot.d/debian.conf
+          echo 'users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
+          echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
+          echo 'aliases=stable' | sudo tee -a /etc/schroot/chroot.d/debian.conf
 
       - name: Build openSUSE Micro OS Image
         run: |
@@ -53,4 +56,3 @@ jobs:
           podman load -i microos.raw.tar.xz
           podman tag opensuse/microos:latest ghcr.io/your-username/microos-image:latest
           podman push ghcr.io/your-username/microos-image:latest
-
