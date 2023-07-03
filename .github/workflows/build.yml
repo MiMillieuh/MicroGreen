@@ -36,11 +36,8 @@ jobs:
           docker run --rm \
           -v ${{ github.workspace }}/ostree-repo:/repo \
           -v ${{ github.workspace }}/custom-root:/mnt \
-          opensuse/tumbleweed /bin/sh -c '
-          zypper --non-interactive install ostree && \
-          zypper --non-interactive addrepo https://download.opensuse.org/distribution/tumbleweed/repo/oss/ oss && \
-          zypper --non-interactive refresh && \
-          zypper --non-interactive --root=/mnt install neofetch && \
+          opensuse/tumbleweed:latest-minimal /bin/sh -c '
+          zypper --non-interactive install ostree neofetch && \
           ostree init --repo=/repo && \
           ostree commit --repo=/repo --branch=ma_branche --tree=dir=/mnt
           '
