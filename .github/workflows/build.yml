@@ -26,36 +26,33 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y podman
 
-      - name: Create openSUSE chroot
+      - name: Set up openSUSE container
         run: |
-          sudo apt-get install -y debootstrap schroot
-          sudo debootstrap stable /var/chroot/opensuse http://download.opensuse.org/ports/aarch64/tumbleweed/repo/oss/
+          podman run -d --name opensuse-container opensuse/leap:latest tail -f /dev/null
 
-      - name: Set up schroot
+      - name: Copy repository key
         run: |
-          echo '[opensuse]' | sudo tee /etc/schroot/chroot.d/opensuse.conf
-          echo 'description=openSUSE chroot' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
-          echo 'directory=/var/chroot/opensuse' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
-          echo 'users=root' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
-          echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
-          echo 'aliases=tumbleweed' | sudo tee -a /etc/schroot/chroot.d/opensuse.conf
+          podman cp /etc/apt/trusted.gpg.d/opensuse-container.gpg opensuse-container:/etc/apt/trusted.gpg.d/opensuse-container.gpg
 
-      - name: Import Kiwi repository key
+      - name: Copy kiwi-ng configuration
         run: |
-          sudo chroot /var/chroot/opensuse rpm --import https://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Tumbleweed/repodata/repomd.xml.key
+          podman cp /etc/kiwi-ng/opensuse-container.conf opensuse-container:/etc/kiwi-ng/opensuse-container.conf
 
-      - name: Add Kiwi repository
+      - name: Update repository
         run: |
-          echo "deb http://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Tumbleweed/ /" | sudo tee /var/chroot/opensuse/etc/apt/sources.list.d/kiwi.list
-          sudo chroot /var/chroot/opensuse zypper refresh
+          podman exec opensuse-container zypper --gpg-auto-import-keys --non-interactive refresh
 
       - name: Install kiwi-tools
         run: |
-          sudo chroot /var/chroot/opensuse zypper install -y kiwi kiwi-tools
+          podman exec opensuse-container zypper --non-interactive install kiwi kiwi-tools
+
+      - name: Copy kiwi description
+        run: |
+          podman cp microos.kiwi opensuse-container:/root/microos.kiwi
 
       - name: Build openSUSE Micro OS Image
         run: |
-          sudo schroot -c opensuse -- kiwi system build --description /root/microos.kiwi
+          podman exec opensuse-container kiwi-ng system build --description /root/microos.kiwi
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
@@ -66,6 +63,11 @@ jobs:
 
       - name: Push image to GHCR
         run: |
-          podman load -i /var/chroot/opensuse/root/microos-kernel
+          podman load -i /var/lib/containers/storage/overlay-containers/*/userdata/opensuse-rootfs.tar
           podman tag opensuse/microos:latest ghcr.io/your-username/microos-image:latest
           podman push ghcr.io/your-username/microos-image:latest
+
+      - name: Clean up
+        run: |
+          podman stop opensuse-container
+          podman rm opensuse-container
