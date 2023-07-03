@@ -18,6 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -37,15 +38,8 @@ jobs:
 
       - name: Build Micro OS Image
         run: |
-          sudo coreos-assembler init --force --platform=qemu --board=qemu --type=base
-          sudo coreos-assembler fetch
-
-          # Copy packages.yaml from the repository to configs/microstream
-          cp packages.yaml coreos-assembler/configs/microstream/packages.yaml
-
-          sudo coreos-assembler build
-
-          sudo coreos-assembler image
+          cd coreos-assembler
+          sudo coreos-assembler build microstream
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
