@@ -53,3 +53,4 @@ jobs:
           podman load -i microos.raw.tar.xz
           podman tag opensuse/microos:latest ghcr.io/your-username/microos-image:latest
           podman push ghcr.io/your-username/microos-image:latest
+
