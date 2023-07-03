@@ -40,13 +40,10 @@ jobs:
           echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
           echo 'aliases=stable' | sudo tee -a /etc/schroot/chroot.d/debian.conf
 
-      - name: Download Kiwi repository key
-        run: |
-          wget -O kiwi.key https://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/Release.key
-
       - name: Import Kiwi repository key
         run: |
-          sudo apt-key --keyring /etc/apt/trusted.gpg.d/kiwi.gpg add kiwi.key
+          wget -O kiwi.pub https://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/Release.key.pub
+          sudo apt-key --keyring /etc/apt/trusted.gpg.d/kiwi.gpg add kiwi.pub
 
       - name: Add Kiwi repository
         run: |
