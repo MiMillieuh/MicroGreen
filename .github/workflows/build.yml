@@ -40,12 +40,15 @@ jobs:
           echo 'root-users=root' | sudo tee -a /etc/schroot/chroot.d/debian.conf
           echo 'aliases=stable' | sudo tee -a /etc/schroot/chroot.d/debian.conf
 
-      - name: Add openSUSE repositories
+      - name: Add Kiwi repository key
         run: |
-          echo "deb http://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/ /" | sudo tee /var/chroot/debian/etc/apt/sources.list.d/opensuse.list
-          echo "deb http://download.opensuse.org/repositories/system:/image:/builder/Debian_11/ /" | sudo tee -a /var/chroot/debian/etc/apt/sources.list.d/opensuse.list
-          echo "deb http://download.opensuse.org/repositories/home:/kukuk/Debian_11/ /" | sudo tee -a /var/chroot/debian/etc/apt/sources.list.d/opensuse.list
-          sudo chroot /var/chroot/debian apt-get update
+          sudo apt-get install -y gnupg
+          wget -qO - https://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/Release.key | sudo apt-key add -
+
+      - name: Add Kiwi repository
+        run: |
+          echo "deb http://download.opensuse.org/repositories/Virtualization:/containers/Debian_11/ /" | sudo tee /etc/apt/sources.list.d/kiwi.list
+          sudo apt-get update
 
       - name: Install kiwi-tools
         run: |
