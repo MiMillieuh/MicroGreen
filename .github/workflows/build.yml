@@ -2,7 +2,7 @@ name: Build OSTree Image
 on:
   push:
     branches:
-      - main  # Modifier selon votre branche
+      - main
 
 jobs:
   build:
