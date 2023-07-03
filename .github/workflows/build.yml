@@ -30,11 +30,14 @@ jobs:
         run: |
           podman run -d --name opensuse-container opensuse/leap:latest tail -f /dev/null
 
-      - name: Update repository
+      - name: Add Kiwi repositories
         run: |
-          podman exec opensuse-container zypper --gpg-auto-import-keys --non-interactive refresh
+          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/Virtualization:/containers/openSUSE_Leap_15.3/ kiwi
+          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/Virtualization:/containers:/Builder/openSUSE_Leap_15.3/ kiwi-builder
+          podman exec opensuse-container zypper addrepo -g -f http://download.opensuse.org/repositories/home:/kukuk/openSUSE_Leap_15.3/ kiwi-kukuk
+          podman exec opensuse-container zypper refresh
 
-      - name: Install kiwi-tools
+      - name: Install kiwi and kiwi-tools
         run: |
           podman exec opensuse-container zypper --non-interactive install kiwi kiwi-tools
 
