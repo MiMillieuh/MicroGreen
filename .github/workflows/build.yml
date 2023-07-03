@@ -40,8 +40,9 @@ jobs:
           # Customization - Add neofetch package
           echo 'neofetch' | sudo tee -a configs/platforms/microstream.xml
 
-          # Build the image only for x86_64
-          sudo cosa build -p microstream -c configs/platforms/microstream.xml --platform=linux/amd64
+          # Build the image only for x86_64 with kolet
+          sudo cosa build -p kolet -c configs/platforms/microstream.xml --platform=linux/amd64
+
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
