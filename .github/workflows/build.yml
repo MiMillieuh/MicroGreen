@@ -34,6 +34,14 @@ jobs:
         run: |
           podman exec opensuse-container zypper --non-interactive install git make gcc libtool autoconf automake pkg-config glib2-devel libxml2-devel
 
+      - name: Clone kiwi repository
+        run: |
+          podman exec opensuse-container git clone https://github.com/osinside/kiwi.git /root/kiwi
+
+      - name: Build and install kiwi
+        run: |
+          podman exec opensuse-container bash -c "cd /root/kiwi && autoreconf -i && ./configure && make && make install"
+
       - name: Copy kiwi description
         run: |
           podman cp microos.kiwi opensuse-container:/root/microos.kiwi
