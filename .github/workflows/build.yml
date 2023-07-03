@@ -30,11 +30,6 @@ jobs:
         run: |
           podman run -d --name opensuse-container opensuse/leap:latest tail -f /dev/null
 
-      - name: Copy kiwi-ng configuration
-        run: |
-          cp opensuse-container.conf $GITHUB_WORKSPACE/opensuse-container.conf
-          podman cp $GITHUB_WORKSPACE/opensuse-container.conf opensuse-container:/etc/kiwi-ng/opensuse-container.conf
-
       - name: Update repository
         run: |
           podman exec opensuse-container zypper --gpg-auto-import-keys --non-interactive refresh
