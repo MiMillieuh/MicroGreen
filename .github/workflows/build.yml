@@ -42,7 +42,7 @@ jobs:
 
       - name: Build openSUSE Micro OS Image
         run: |
-          sudo schroot -c debian --directory=/root -- kiwi-ng system build --description /root/microos.kiwi
+          sudo schroot -c debian --directory=/root -- bash -c "apt-get update && apt-get install -y kiwi-tools && kiwi-ng system build --description /root/microos.kiwi"
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
