@@ -34,14 +34,15 @@ jobs:
       - name: Build OSTree Image
         run: |
           docker run --rm \
-            -v ${{ github.workspace }}/ostree-repo:/repo \
-            -v ${{ github.workspace }}/custom-root:/mnt \
-            opensuse/tumbleweed /bin/sh -c '
-            zypper --non-interactive install ostree && \
-            ostree init --repo=/repo && \
-            zypper --non-interactive --root=/mnt install neofetch && \
-            ostree commit --repo=/repo --branch=ma_branche --tree=dir=/mnt
-            '
+          -v ${{ github.workspace }}/ostree-repo:/repo \
+          -v ${{ github.workspace }}/custom-root:/mnt \
+          opensuse/tumbleweed /bin/sh -c '
+          zypper --non-interactive install ostree && \
+          zypper refresh && \
+          zypper --non-interactive --root=/mnt install neofetch && \
+          ostree init --repo=/repo && \
+          ostree commit --repo=/repo --branch=ma_branche --tree=dir=/mnt
+          '
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
