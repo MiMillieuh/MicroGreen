@@ -23,7 +23,7 @@ jobs:
 
       - name: Installer les dépendances
         run: |
-          sudo zypper install kiwi kiwi-desc-isoboot kiwi-desc-netboot kiwi-tools mic ostree
+          sudo apt install kiwi kiwi-desc-isoboot kiwi-desc-netboot kiwi-tools mic ostree
 
       - name: Installer le paquet neofetch
         run: |
