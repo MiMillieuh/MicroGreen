@@ -23,5 +23,5 @@ ARG GHCR_REPOSITORY
 ARG GHCR_TAG
 
 RUN echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
-RUN docker tag mybranch ghcr.io/${GHCR_USERNAME}/${GHCR_REPOSITORY}:${GHCR_TAG}
-RUN docker push ghcr.io/${GHCR_USERNAME}/${GHCR_REPOSITORY}:${GHCR_TAG}
+RUN docker tag mybranch ghcr.io/${GHCR_REPOSITORY}:${GHCR_TAG}
+RUN docker push ghcr.io/${GHCR_REPOSITORY}:${GHCR_TAG}
