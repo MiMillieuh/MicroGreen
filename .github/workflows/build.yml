@@ -23,7 +23,7 @@ jobs:
       - name: Set Repository Name
         id: set_repo_name
         run: |
-          echo "::set-output name=repo_name::$(echo ${{ github.repository }} | awk '{print tolower($0)}')"
+          echo "::set-output name=repo_name::$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')"
 
       - name: Build and Publish Image
         env:
