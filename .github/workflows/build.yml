@@ -26,6 +26,6 @@ jobs:
           GHCR_REPOSITORY: ${{ github.repository }}
           GHCR_TAG: latest
         run: |
-          GHCR_USERNAME_LOWER=$(echo "${GHCR_USERNAME}" | tr '[:upper:]' '[:lower:]')
+          GHCR_USERNAME_LOWER=$(echo "${GHCR_USERNAME}" | awk '{print tolower($0)}')
           docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME_LOWER --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME_LOWER/$GHCR_REPOSITORY:$GHCR_TAG
           docker push ghcr.io/$GHCR_USERNAME_LOWER/$GHCR_REPOSITORY:$GHCR_TAG
