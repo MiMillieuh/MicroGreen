@@ -20,12 +20,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Repository Name
+        id: set_repo_name
+        run: |
+          echo "::set-output name=repo_name::$(echo ${{ github.repository }} | awk '{print tolower($0)}')"
+
       - name: Build and Publish Image
         env:
           GHCR_USERNAME: ${{ github.actor }}
-          GHCR_REPOSITORY: ${{ github.repository }}
+          GHCR_REPOSITORY: ${{ steps.set_repo_name.outputs.repo_name }}
           GHCR_TAG: latest
         run: |
-          GHCR_USERNAME_LOWER=$(echo "${GHCR_USERNAME}" | awk '{print tolower($0)}')
-          docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME_LOWER --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME_LOWER/$GHCR_REPOSITORY:$GHCR_TAG
-          docker push ghcr.io/$GHCR_USERNAME_LOWER/$GHCR_REPOSITORY:$GHCR_TAG
+          docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
+          docker push ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
