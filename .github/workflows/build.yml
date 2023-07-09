@@ -23,7 +23,7 @@ jobs:
       - name: Set Repository Name
         id: set_repo_name
         run: |
-          echo "::set-output name=repo_name::$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')"
+          echo "::set-output name=repo_name::$(echo ${{ github.repository }} | awk '{print tolower($0)}')"
 
       - name: Build and Publish Image
         env:
@@ -31,5 +31,5 @@ jobs:
           GHCR_REPOSITORY: ${{ steps.set_repo_name.outputs.repo_name }}
           GHCR_TAG: latest
         run: |
-          docker build --build-arg GHCR_USERNAME=${GHCR_USERNAME,,} --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/${GHCR_USERNAME,,}/$GHCR_REPOSITORY:$GHCR_TAG
-          docker push ghcr.io/${GHCR_USERNAME,,}/$GHCR_REPOSITORY:$GHCR_TAG
+          docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
+          docker push ghcr.io/$GHCR_REPOSITORY:$GHCR_TAG
