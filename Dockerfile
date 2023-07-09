@@ -3,7 +3,7 @@ FROM opensuse/tumbleweed:latest
 
 # Mettez à jour le système et installez les paquets supplémentaires
 RUN zypper --non-interactive update && \
-    zypper --non-interactive install ostree rpm-ostree && \
+    zypper --non-interactive install ostree && \
     zypper --non-interactive install neofetch firefox
 
 # Nettoyez le cache des paquets
@@ -13,7 +13,7 @@ RUN zypper --non-interactive clean -a
 RUN ostree init --repo=/srv/myrepo
 
 # Générez un commit OSTree à partir du système personnalisé
-RUN rpm-ostree commit --repo=/srv/myrepo --branch=mybranch container:/ /
+RUN ostree --repo=/srv/myrepo commit --branch=mybranch --consume --cherrypick=/
 
 # Spécifiez le commit à déployer lors du démarrage du conteneur
 CMD ["rpm-ostree", "deploy", "mybranch"]
