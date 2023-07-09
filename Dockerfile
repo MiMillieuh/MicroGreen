@@ -3,7 +3,7 @@ FROM opensuse/tumbleweed:latest
 
 # Mettez à jour le système et installez les paquets supplémentaires
 RUN zypper --non-interactive update && \
-    zypper --non-interactive install ostree rpm-ostree \
+    zypper --non-interactive install ostree rpm-ostree && \
     zypper --non-interactive install neofetch firefox
 
 # Nettoyez le cache des paquets
