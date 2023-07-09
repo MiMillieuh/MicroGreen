@@ -1,13 +1,27 @@
-FROM opensuse/microos:latest
+# Utilisez une image de base openSUSE Tumbleweed
+FROM opensuse/tumbleweed:latest
 
-# Installer les outils nécessaires
-RUN zypper --non-interactive install -y kiwi kiwi-desc-netboot kiwi-tools ostree
+# Mettez à jour le système et installez les paquets supplémentaires
+RUN zypper --non-interactive update && \
+    zypper --non-interactive install <paquet1> <paquet2>
 
-# Cloner le référentiel MicroOS-desktop
-RUN git clone https://github.com/openSUSE/microOS-desktop.git
+# Nettoyez le cache des paquets
+RUN zypper --non-interactive clean -a
 
-# Construire l'image OSTree personnalisée
-RUN cd microOS-desktop && sudo kiwi-ng --type ostree system build --description kiwi-desc-netboot
+# Initialisez le référentiel OSTree
+RUN ostree init --repo=/srv/myrepo
 
-# Déplacer l'image OSTree résultante
-RUN sudo mv microOS-desktop/result/* /workspace
+# Générez un commit OSTree à partir du système personnalisé
+RUN rpm-ostree commit --repo=/srv/myrepo --branch=mybranch container:/ /
+
+# Spécifiez le commit à déployer lors du démarrage du conteneur
+CMD ["rpm-ostree", "deploy", "mybranch"]
+
+# Publiez l'image sur GitHub Container Registry
+ARG GHCR_USERNAME
+ARG GHCR_REPOSITORY
+ARG GHCR_TAG
+
+RUN echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+RUN docker tag mybranch ghcr.io/${GHCR_USERNAME}/${GHCR_REPOSITORY}:${GHCR_TAG}
+RUN docker push ghcr.io/${GHCR_USERNAME}/${GHCR_REPOSITORY}:${GHCR_TAG}
