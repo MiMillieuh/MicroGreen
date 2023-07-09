@@ -25,9 +25,10 @@ jobs:
 
       - name: Build and Publish Image
         env:
-          GHCR_USERNAME: ${{ github.actor | lower }}
+          GHCR_USERNAME: ${{ github.actor }}
           GHCR_REPOSITORY: ${{ github.repository }}
           GHCR_TAG: latest
         run: |
-          docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
-          docker push ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
+          GHCR_USERNAME_LOWER=$(echo "${GHCR_USERNAME}" | tr '[:upper:]' '[:lower:]')
+          docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME_LOWER --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME_LOWER/$GHCR_REPOSITORY:$GHCR_TAG
+          docker push ghcr.io/$GHCR_USERNAME_LOWER/$GHCR_REPOSITORY:$GHCR_TAG
