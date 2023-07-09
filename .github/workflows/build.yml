@@ -1,18 +1,10 @@
-name: Mises à jour OSTree
+name: Build and Publish
+
 on:
   push:
     branches:
       - main
-      
-  pull_request:
-    paths-ignore:
-      - "**.md"
-      - "**.txt"
-  # Build when manually triggering this workflow for a branch. This allows you
-  # to build any branch, even if it's not listed in the automated triggers above.
-  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
-  workflow_dispatch:
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,34 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Podman
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y podman
-
-      - name: Set up openSUSE container
-        run: |
-          podman run -d --name opensuse-container opensuse/leap:latest tail -f /dev/null
-
-      - name: Install dependencies
-        run: |
-          podman exec opensuse-container zypper --non-interactive install git make gcc libtool autoconf automake pkg-config glib2-devel libxml2-devel
-
-      - name: Clone kiwi repository
-        run: |
-          podman exec opensuse-container git clone https://github.com/osinside/kiwi.git /root/kiwi
-
-      - name: Build and install kiwi
-        run: |
-          podman exec opensuse-container bash -c "cd /root/kiwi && autoreconf -i && ./configure && make && make install"
-
-      - name: Copy kiwi description
-        run: |
-          podman cp microos.kiwi opensuse-container:/root/microos.kiwi
-
-      - name: Build openSUSE Micro OS Image
-        run: |
-          podman exec opensuse-container kiwi-ng system build --description /root/microos.kiwi
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
 
       - name: Log in to GHCR
         uses: docker/login-action@v1
@@ -57,13 +23,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push image to GHCR
+      - name: Build and Publish Image
+        env:
+          GHCR_USERNAME: ${{ github.actor | lower }}
+          GHCR_REPOSITORY: ${{ github.repository }}
+          GHCR_TAG: latest
         run: |
-          podman load -i /var/lib/containers/storage/overlay-containers/*/userdata/opensuse-rootfs.tar
-          podman tag opensuse/microos:latest ghcr.io/your-username/microos-image:latest
-          podman push ghcr.io/your-username/microos-image:latest
-
-      - name: Clean up
-        run: |
-          podman stop opensuse-container
-          podman rm opensuse-container
+          docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
+          docker push ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
