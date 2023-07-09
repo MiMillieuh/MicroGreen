@@ -31,5 +31,7 @@ jobs:
           GHCR_REPOSITORY: ${{ steps.set_repo_name.outputs.repo_name }}
           GHCR_TAG: latest
         run: |
+          echo $GHCR_USERNAME
+          echo $GHCR_REPOSITORY
           docker build --build-arg GHCR_USERNAME=$GHCR_USERNAME --build-arg GHCR_REPOSITORY=$GHCR_REPOSITORY --build-arg GHCR_TAG=$GHCR_TAG -t ghcr.io/$GHCR_USERNAME/$GHCR_REPOSITORY:$GHCR_TAG
           docker push ghcr.io/$GHCR_REPOSITORY:$GHCR_TAG
